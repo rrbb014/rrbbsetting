@@ -1,0 +1,41 @@
+#!/usr/bin/python3
+
+"""
+Binarizer for convert decimal number to binary number
+Author: rrbb014
+Contact: gutssoul1@gmail.com
+"""
+
+import argparse
+
+
+def binarize(number):
+    if not isinstance(number, int):
+        raise AttributeError("Should input data type is integer")
+
+    return bin(number).replace('0b', '')
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument('number', type=int, help='Decimal number what you wan to convert binary')
+    parser.add_argument('-v', '--verbose', action='store_true')
+    args = parser.parse_args()
+
+
+    res = binarize(args.number)
+    if args.verbose:
+        v_res = ""
+        cnt = 8
+        for c in res[::-1]:
+            if 0 < cnt <= 8:
+                v_res = c + v_res
+                cnt -= 1
+            else:
+                v_res = '{} '.format(c) + v_res
+                cnt = 8
+
+        v_res = "Input: {} -> Binary: ".format(args.number) + v_res
+        res = v_res
+
+    print(res)
