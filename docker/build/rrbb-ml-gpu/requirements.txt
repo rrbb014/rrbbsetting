@@ -1,0 +1,14 @@
+numpy
+pandas
+ipython
+matplotlib
+scipy
+statsmodels
+coloredlogs
+humanhash3==0.0.6
+hdfs==2.1.0
+kazoo==2.5.0
+connexion
+Flask
+psutil
+WerkZeug
