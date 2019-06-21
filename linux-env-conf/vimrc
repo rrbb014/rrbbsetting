@@ -5,13 +5,21 @@ set fileencodings=UTF-8
 
 " Text Editor
 set nu    " Set Line number
+set nobackup
+set showcmd
+set autoindent
+set noswapfile
+set tabstop=4
+set shiftwidth=4
+set expandtab
 
 set nocompatible    " be Improved
 filetype on
 
 
-"
+" ######
 " PLUGIN
+" ######
 "
 " set the runtime path to include Vundle and initialize
 set rtp+=~/.vim/bundle/Vundle.vim
