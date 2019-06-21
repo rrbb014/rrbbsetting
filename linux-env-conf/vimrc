@@ -1,5 +1,86 @@
-" Set line number
+
+" Encoding
 set enc=UTF-8
 set fileencodings=UTF-8
 
-set nu
+" Text Editor
+set nu    " Set Line number
+
+set nocompatible    " be Improved
+filetype on
+
+
+"
+" PLUGIN
+"
+" set the runtime path to include Vundle and initialize
+set rtp+=~/.vim/bundle/Vundle.vim
+call vundle#begin()
+
+" alternatively, pass a path where Vundle should install plugins
+"call vundle#begin('~/.vim/plugged')
+
+
+" let Vundle manage Vundle, required
+Plugin 'VundleVim/Vundle.vim'
+
+
+" plugin on GitHub repo
+Plugin 'tpope/vim-fugitive'
+
+
+" NERDTree
+Plugin 'scrooloose/nerdtree'
+map <F2> :NERDTreeToggle<CR>
+let g:NERDTreeDirArrowExpandable = '▸'
+let g:NERDTreeDirArrowCollapsible = '▾'
+
+" easytag
+" It depends on vim-misc plugin
+Plugin 'xolox/vim-misc'
+Plugin 'xolox/vim-easytags'
+set tag=./tags;/ " easy-tag 
+" tags를 비동기로 불러와준다. (필수) tag사이즈가 커지게 되면 vim이 블록되는 시간이 길어져서 답답하다
+let g:easytags_async=1 " highlight를 켜면 좋지만 이것도 속도가 느려진다.
+let g:easytags_auto_highlight = 0 " struct의 멤버변수들도 추적이 된다.
+let g:easytags_include_members = 1 " 현재 프로젝트에서 쓰는 tags파일을 우선 로드하고 없을 경우 global tags를 로드한다.
+let g:easytags_dynamic_files = 1
+
+
+" cscope
+Plugin 'ronakg/quickr-cscope.vim'
+function! LoadCscope()
+    let db = findfile("cscope.out", ".;")
+    if (!empty(db))
+      let path = strpart(db, 0, match(db, "/cscope.out$"))
+      set nocscopeverbose " suppress 'duplicate connection' error
+      exe "cs add " . db . " " . path
+      set cscopeverbose
+    " else add the database pointed to by environment variable
+    elseif $CSCOPE_DB != ""
+      cs add $CSCOPE_DB
+    endif
+endfunction
+au BufEnter /* call LoadCscope()
+
+
+" Tagbar, F8 key for toggle
+Plugin 'majutsushi/tagbar'
+nmap <F8> :TagbarToggle<CR>
+
+Plugin 'terryma/vim-multiple-cursors'
+let g:multi_cursor_use_default_mapping=0
+
+" Default mapping
+let g:multi_cursor_start_word_key      = '<C-n>'
+let g:multi_cursor_select_all_word_key = '<A-n>'
+let g:multi_cursor_start_key           = 'g<C-n>'
+let g:multi_cursor_select_all_key      = 'g<A-n>'
+let g:multi_cursor_next_key            = '<C-n>'
+let g:multi_cursor_prev_key            = '<C-p>'
+let g:multi_cursor_skip_key            = '<C-x>'
+let g:multi_cursor_quit_key            = '<Esc>'
+
+" All of your Plugins must be added before the following line
+call vundle#end()            " required
+filetype plugin indent on    " required

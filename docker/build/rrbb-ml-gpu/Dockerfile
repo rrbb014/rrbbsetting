@@ -17,7 +17,8 @@ RUN apt-get install -y net-tools
 RUN apt-get install -y python3.6
 RUN apt-get install -y python3.6-dev
 RUN wget https://bootstrap.pypa.io/get-pip.py
-RUN python3.6 get-pip.py
+RUN cp /usr/bin/python3.6 /usr/bin/python3
+RUN python3 get-pip.py
 RUN apt-get install -y build-essential
 
 RUN pip3 install --upgrade pip

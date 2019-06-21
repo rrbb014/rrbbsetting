@@ -1,0 +1,11 @@
+version: '3'
+
+services:
+  gpu1:
+    image: rrbb-ml-gpu:v1
+  gpu2:
+    image: rrbb-ml-gpu:v1
+  gpu3:
+    image: rrbb-ml-gpu:v1
+  gpu4:
+    image: rrbb-ml-gpu:v1
