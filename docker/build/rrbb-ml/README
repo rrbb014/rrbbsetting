@@ -1,0 +1,17 @@
+* This image is for debugging inside container environments on the fly
+
+Python ver: 3.5.2
+Included pkgs:
+    - numpy
+    - pandas
+    - ipython
+    - scipy
+    - matplotlib
+    - statsmodels
+    - coloredlogs
+    - humanhash3
+    - kazoo
+    - hdfs
+    
+To build image:
+    $ cd .. && sudo docker build -t rrbb_ml rrbb-ml
