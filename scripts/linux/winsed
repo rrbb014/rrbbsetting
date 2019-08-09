@@ -1,0 +1,8 @@
+#!/bin/bash
+
+TARGET_DIR=$(readlink -f .)
+for loc in `find $TARGET_DIR`;
+    do 
+        echo "Try to delete '^M' in " $loc
+        sed -i 's/^M//g' $loc; 
+    done
