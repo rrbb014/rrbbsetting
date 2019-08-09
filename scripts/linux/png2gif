@@ -1,0 +1,32 @@
+#!/usr/bin/env python3
+import os
+import imageio
+import argparse
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Convert multiple png files to gif animation file")
+    parser.add_argument("directory", help="specific directory")
+    parser.add_argument("output", help="Output directory location")
+    parser.add_argument("--prefix", help='prefix for gif')
+
+    args = vars(parser.parse_args())
+    cur_dir = os.path.abspath(args.get('directory'))
+    output = os.path.abspath(args.get('output'))
+    prefix = args.get('prefix')
+    if prefix is None:
+        prefix = ''
+    else:
+        prefix += '-'
+
+    file_basename = os.path.split(cur_dir)[1]
+    
+    gif_name = output +'/'+ prefix + file_basename +'.gif'
+    with imageio.get_writer(gif_name, mode='I') as writer:
+        print("Start to make ", gif_name)
+        for filename in os.listdir(cur_dir):
+            if filename.endswith('png'):
+                target_file = cur_dir +'/'+ filename
+                image = imageio.imread(target_file)
+                writer.append_data(image)
+    print("End to make ", gif_name)
