@@ -1,0 +1,69 @@
+#!/usr/bin/env python3
+
+import os
+import yaml
+import argparse
+import logging
+import pandas as pd
+
+from hdfs.client import InsecureClient
+pd.set_option('display.max_columns', 500)
+
+
+
+HDFS_ADDR = 'http://aidemo:50070'
+data_root = '/data/preproc'
+
+
+parser = argparse.ArgumentParser()
+parser.add_argument('yml', help='yaml file location')
+
+args = vars(parser.parse_args())
+yaml_path = os.path.abspath(args.get('yml'))
+
+if not os.path.exists(yaml_path):
+    msg = 'ERROR: Not found %s' % yaml_path
+    print(msg)
+
+with open(yaml_path, encoding='utf8') as f:
+    yaml_dict = yaml.safe_load(f)
+
+msg = "Read %s" % yaml_path
+print(msg)
+
+logtype = yaml_dict.get('logtype')
+pipeline_prefix = yaml_dict.get('prefix')
+
+# Get features will be used from yaml file
+all_features = []
+for feature_type, feature_list in yaml_dict['features'].items():
+    all_features += feature_list
+
+# connect hdfs
+client = InsecureClient(HDFS_ADDR)
+
+# get file
+NOT_CATCH_DATA = True
+csv_filename = ''
+
+hdfs_data_path = '/'.join(yaml_dict.get('unshuffled_data').split('/')[:6])
+while NOT_CATCH_DATA:
+    cur_list = client.list(hdfs_data_path)
+    target = cur_list[-1]
+
+    if target.endswith('csv'):
+        csv_filename = target
+        NOT_CATCH_DATA=False
+
+    hdfs_data_path += '/'+target
+    
+client.download(hdfs_data_path, '.', overwrite=True)
+    
+# load 
+data = pd.read_csv('./'+csv_filename)
+data = data[all_features]
+
+# describe
+print(logtype.upper(), '\t', pipeline_prefix)
+print()
+print(data.describe())

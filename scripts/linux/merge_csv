@@ -1,0 +1,58 @@
+#!/usr/bin/env python3
+
+import os
+import pandas as pd
+import argparse
+
+from glob import glob
+
+parser = argparse.ArgumentParser(description='recursively enter directory and merge ')
+
+parser.add_argument('path', help='target path')
+parser.add_argument('-e', '--extension', default='*.csv', help='file extention what you want to find')
+parser.add_argument('-o', '--output', help='output csv filename')
+
+
+args = vars(parser.parse_args())
+
+root_path = os.path.abspath(args.get('path'))
+file_extension = args.get('extension')
+output_filename = args.get('output') if args.get('output') is not None else os.path.basename(root_path)
+
+if not output_filename.endswith('.csv'):
+    output_filename += '.csv'
+
+if not os.path.exists(root_path):
+    print("ERROR: there is no %s" % root_path)
+
+all_csv = []
+for path, _, _ in os.walk(root_path):
+    temp_list = glob(os.path.join(path, file_extension))
+    for t in temp_list:
+        all_csv.append(t)
+
+all_df = []
+for idx, pth in enumerate(all_csv):
+    try:
+        all_df.append(pd.read_csv(pth)) 
+    except Exception as e:
+        print('ERROR: occured during read csv : %s' % pth)
+        continue
+#        print()
+#        print('ERROR: occured during read csv : %s' % pth)
+#        print(e)
+#        print()
+#        from IPython import embed; embed()
+#
+#        integrated_df = pd.concat(all_df)
+#        print('Concat is finished, it will store csv file')
+#        integrated_df.to_csv('not_finished_'+ output_filename, encoding='utf8')
+#        exit(1)
+
+    print(round(((idx+1)/len(all_csv)*100), 1), '%', end='\r')
+
+print('Now, concatenate all seperate dataframe')
+integrated_df = pd.concat(all_df)
+print('Concat is finished, it will store csv file')
+integrated_df.to_csv(output_filename, encoding='utf8')
+print('DONE! Check %s' % output_filename)

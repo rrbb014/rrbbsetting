@@ -1,0 +1,168 @@
+#!/usr/bin/python3
+#-*- coding:utf-8 -*-
+
+import sys
+import argparse
+import subprocess
+from kazoo.client import KazooClient
+from hdfs.client import InsecureClient
+from kazoo.exceptions import NotEmptyError
+
+ZK_ADDR = 'localhost:2181'              # You can change this value
+HDFS_ADDR = 'http://localhost:50070'    # You can change this value
+BROKER_ADDR = "localhost:9092"
+
+
+class KafkaBrokerCli:
+
+    def rm(self, topic_name: str) -> None:
+        """Delete kafka topic """
+
+        if topic_name is None:
+            print("Should define topic_name what want to delete")
+            exit(1)
+
+        topic_del_cmd = "sudo docker exec broker kafka-topics --zookeeper zookeeper:2181 --delete --topic %s" % topic_name
+        subprocess.call(topic_del_cmd.split())
+
+    def list(self, topic_name: str) -> None:
+        """Print out topic lists"""
+
+        topic_list_cmd = "sudo docker exec broker kafka-topics --zookeeper zookeeper:2181 --list"
+        subprocess.call(topic_list_cmd.split())
+
+    def create(self, topic_name: str) -> None:
+        """create kafka topic"""
+        import uuid
+        import time
+        from confluent_kafka import Producer
+
+        broker_conf = {"bootstrap.servers": BROKER_ADDR}
+        message = uuid.uuid4().hex[:5].encode()
+        producer = Producer(broker_conf)
+        producer.produce(topic_name, message)
+        print("topic: %s , message: %s  created" % (topic_name, message))
+
+        # Waiting for create topic 
+        time.sleep(1)
+        del producer
+
+
+class HdfsCli:
+
+    def list(self, path):
+        """List specific HDFS path directory"""
+        client = InsecureClient(HDFS_ADDR)
+        hdfs_ls = client.list(path)
+        print('\n- '.join(['%s' % path]+hdfs_ls))
+
+
+class ZkCli:
+
+    def list(self, path):
+        """List specified Znode path"""
+
+        client = KazooClient(ZK_ADDR)
+        client.start()
+
+        zk_ls = client.get_children(path)
+        print('\n- '.join(['%s' % path]+zk_ls))
+
+        client.stop()
+        client.close()
+
+    def get(self, path):
+        """ Get contents of specified Znode"""
+
+        client = KazooClient(ZK_ADDR)
+        client.start()
+
+        values = client.get(path)
+        val = values[0] if values[0] is not None else b'None'
+        print(val.decode('utf8'))
+
+        client.stop()
+        client.close()
+
+    def rm(self, path):
+        """Delete specified Znode"""
+
+        client = KazooClient(ZK_ADDR)
+        client.start()
+
+        try:
+            client.delete(path)
+            print("%s successfully deleted" % path)
+        except NotEmptyError:
+            print("If you want to delete directories, recommend to use 'zkhdfs zk rmr [path]'")
+
+        client.stop()
+        client.close()
+
+    def rmr(self, path):
+        """ Delete specified Znode recursively"""
+        client = KazooClient(ZK_ADDR)
+        client.start()
+
+        client.delete(path, recursive=True)
+        print("%s successfully deleted" % path)
+
+        client.stop()
+        client.close()
+
+
+class ZkHdfsKafka:
+    def __init__(self):
+        parser = argparse.ArgumentParser()
+        parser.add_argument('command')
+        args = vars(parser.parse_args(args=sys.argv[1:2]))
+        command = args.get('command')
+
+        getattr(self, command)()
+
+    def hdfs(self):
+        """ For HDFS """
+
+        parser = argparse.ArgumentParser()
+        parser.add_argument('command')
+        parser.add_argument('path', default=None)
+
+        args = vars(parser.parse_args(args=sys.argv[2:]))
+        command = args.get('command')
+        pth = args.get('path')
+
+        getattr(HdfsCli, command)(HdfsCli(), pth)
+
+    def zk(self):
+        """ For Zookeeper """
+        parser = argparse.ArgumentParser()
+        parser.add_argument('command')
+        parser.add_argument('path', default=None)
+
+        args = vars(parser.parse_args(args=sys.argv[2:]))
+        command = args.get('command')
+        pth = args.get('path')
+
+        getattr(ZkCli, command)(ZkCli(), pth)
+
+    def zookeeper(self):
+        """ For Zookeeper """
+        self.zk()
+
+
+    def kafka(self):
+        """ For Kafka """
+        parser = argparse.ArgumentParser()
+        parser.add_argument('command')
+        parser.add_argument('topic_name', nargs='?', default=None)
+
+        args = vars(parser.parse_args(args=sys.argv[2:]))
+        command = args.get('command')
+
+        topic_name = args.get('topic_name')
+
+        getattr(KafkaBrokerCli, command)(KafkaBrokerCli(), topic_name)
+
+
+if __name__ == "__main__":
+    ZkHdfsKafka()
