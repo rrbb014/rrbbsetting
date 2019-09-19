@@ -56,6 +56,17 @@ class HdfsCli:
         hdfs_ls = client.list(path)
         print('\n- '.join(['%s' % path]+hdfs_ls))
 
+    def ls(self, path):
+        self.list(path)
+
+
+def znode(path: str):
+    path = path.replace('.', '/')
+    if not path.startswith('/'):
+        path = '/' + path
+
+    return path
+
 
 class ZkCli:
 
@@ -65,11 +76,15 @@ class ZkCli:
         client = KazooClient(ZK_ADDR)
         client.start()
 
+        path = znode(path)
         zk_ls = client.get_children(path)
         print('\n- '.join(['%s' % path]+zk_ls))
 
         client.stop()
         client.close()
+
+    def ls(self, path):
+        self.list(path)
 
     def get(self, path):
         """ Get contents of specified Znode"""
@@ -77,6 +92,7 @@ class ZkCli:
         client = KazooClient(ZK_ADDR)
         client.start()
 
+        path = znode(path)
         values = client.get(path)
         val = values[0] if values[0] is not None else b'None'
         print(val.decode('utf8'))
@@ -90,6 +106,7 @@ class ZkCli:
         client = KazooClient(ZK_ADDR)
         client.start()
 
+        path = znode(path)
         try:
             client.delete(path)
             print("%s successfully deleted" % path)
@@ -104,17 +121,36 @@ class ZkCli:
         client = KazooClient(ZK_ADDR)
         client.start()
 
+        path = znode(path)
         client.delete(path, recursive=True)
         print("%s successfully deleted" % path)
 
         client.stop()
         client.close()
 
+    def set(self, key_value):
+        """ Set value to specific znode"""
+        client = KazooClient(ZK_ADDR)
+        client.start()
+        
+
+        key_value_list = key_value.split('=')
+        if not len(key_value_list) > 1 or len(key_value_list) > 2:
+            print("key or value is wrong. Check input <key>=<value> format")
+            exit(1)
+
+        path, value = key_value_list[0], key_value_list[1]
+        path = znode(path)
+
+        client.ensure_path(path)
+        client.set(path, value.encode('utf8'), -1)
+
 
 class ZkHdfsKafka:
     def __init__(self):
+        available_commands = [i for i in self.__dir__() if not i.startswith('_') and callable(getattr(self, i))]
         parser = argparse.ArgumentParser()
-        parser.add_argument('command')
+        parser.add_argument('command', choices=available_commands)
         args = vars(parser.parse_args(args=sys.argv[1:2]))
         command = args.get('command')
 
@@ -122,9 +158,10 @@ class ZkHdfsKafka:
 
     def hdfs(self):
         """ For HDFS """
+        available_commands = [i for i in HdfsCli().__dir__() if not i.startswith('_') and callable(getattr(HdfsCli, i))]
 
         parser = argparse.ArgumentParser()
-        parser.add_argument('command')
+        parser.add_argument('command', choices=available_commands)
         parser.add_argument('path', default=None)
 
         args = vars(parser.parse_args(args=sys.argv[2:]))
@@ -135,8 +172,9 @@ class ZkHdfsKafka:
 
     def zk(self):
         """ For Zookeeper """
+        available_commands = [i for i in ZkCli().__dir__() if not i.startswith('_') and callable(getattr(ZkCli, i))]
         parser = argparse.ArgumentParser()
-        parser.add_argument('command')
+        parser.add_argument('command', choices=available_commands)
         parser.add_argument('path', default=None)
 
         args = vars(parser.parse_args(args=sys.argv[2:]))
@@ -152,8 +190,9 @@ class ZkHdfsKafka:
 
     def kafka(self):
         """ For Kafka """
+        available_commands = [i for i in KafkaBrokerCli().__dir__() if not i.startswith('_') and callable(getattr(KafkaBrokerCli, i))]
         parser = argparse.ArgumentParser()
-        parser.add_argument('command')
+        parser.add_argument('command', choices=available_commands)
         parser.add_argument('topic_name', nargs='?', default=None)
 
         args = vars(parser.parse_args(args=sys.argv[2:]))
