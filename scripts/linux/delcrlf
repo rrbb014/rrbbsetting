@@ -1,0 +1,19 @@
+#!/bin/bash
+
+LOCATION=$1
+
+if [ $LOCATION == "" ]
+then
+    echo "specify location"
+    exit
+fi
+
+LOCATION=$(readlink -f $1)
+
+for file in `find $LOCATION`
+do 
+    if [ -f $file ]
+    then
+        sed -i 's///g' $file
+    fi
+done
