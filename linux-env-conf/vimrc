@@ -16,6 +16,8 @@ set expandtab
 set nocompatible    " be Improved
 filetype on
 
+" Folding
+set foldmethod=marker
 
 " ######
 " PLUGIN
