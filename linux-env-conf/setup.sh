@@ -6,6 +6,9 @@ EXEC_PATH=$(readlink -f $(dirname "$0"))
 # GIT
 sudo apt-get install -y git
 
+# ZSH
+sh setup-zsh.sh
+
 # TMUX
 sudo apt-get remove -y tmux
 sudo apt-get update

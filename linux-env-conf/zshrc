@@ -1,0 +1,8 @@
+# ZSH THEME
+ZSH_THEME="miloshadzic"
+
+
+# human readable ls
+alias ll="ls -alh"
+
+echo -ne "\e]1;PC NAME\a"
