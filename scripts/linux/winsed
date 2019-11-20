@@ -1,8 +1,14 @@
 #!/bin/bash
 
-TARGET_DIR=$(readlink -f .)
-for loc in `find $TARGET_DIR`;
+LOCATION=$1
+if [ -z $LOCATION ]
+then 
+    echo "ERROR: No location."
+    exit 1
+fi
+
+for loc in `find $LOCATION -type f ! -iname *.war ! -iname *.zip ! -iname *.deb ! -iname *.gz ! -iname *.tar ! -iname *.pyc ! -iname winsed`;
     do 
         echo "Try to delete '^M' in " $loc
-        sed -i 's/^M//g' $loc; 
+        sed -i 's/\r//g' $loc; 
     done
