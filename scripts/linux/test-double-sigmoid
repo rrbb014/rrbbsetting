@@ -1,0 +1,40 @@
+#!/usr/bin/env python3
+
+"""
+Double Sigmoid Test Script
+Author: Minseo Gong 
+"""
+
+import math
+import argparse
+
+def double_sigmoid(x, s1, m, s2):
+    print("Double Sigmoid function parameter")
+    print("=======")
+    print("s1: %f" % s1)
+    print("m: %f" % m)
+    print("s2: %f" % s2)
+    print("=======")
+
+    if x < m :
+        return 1 / (1 + math.exp(-2 * (x-m) / s1))
+    else:
+        return 1 / (1 + math.exp(-2 * (x-m) / s2))
+
+parser = argparse.ArgumentParser()
+parser.add_argument('x', type=float, help='input value') 
+parser.add_argument("--s1", type=float, help='s1 parameter for double sigmoid')
+parser.add_argument("--m", type=float, help='m parameter for double sigmoid')
+parser.add_argument("--s2", type=float, help="s2 parameter for double sigmoid")
+
+args = vars(parser.parse_args())
+x = args['x']
+s1 = args['s1']
+m = args['m']
+s2 = args['s2']
+
+if s1 is None or m is None or s2 is None:
+    print("ERROR: Should define all params using --s1, --m, --s2")
+    exit(1)
+
+print("input: %i  >> Result: %f" % (x, double_sigmoid(x, s1, m, s2) * 100))
