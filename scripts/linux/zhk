@@ -58,7 +58,10 @@ class HdfsCli:
 
     def ls(self, path):
         self.list(path)
-
+    
+    def mkdir(self, path):
+        client = InsecureClient(HDFS_ADDR)
+        client.makedirs(path)
 
 def znode(path: str):
     path = path.replace('.', '/')
