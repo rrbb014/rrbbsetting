@@ -63,6 +63,13 @@ class HdfsCli:
         client = InsecureClient(HDFS_ADDR)
         client.makedirs(path)
 
+    def cat(self, path):
+        client = InsecureClient(HDFS_ADDR)
+        with client.read(path) as reader:
+            content = reader.read()
+
+        print(content.decode('utf8'))
+
 def znode(path: str):
     path = path.replace('.', '/')
     if not path.startswith('/'):
