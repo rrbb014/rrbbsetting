@@ -10,7 +10,7 @@ from kazoo.exceptions import NotEmptyError
 
 ZK_ADDR = 'localhost:2181'              # You can change this value
 HDFS_ADDR = 'http://localhost:50070'    # You can change this value
-BROKER_ADDR = "localhost:9092"
+BROKER_ADDR = "localhost:29092"
 
 
 class KafkaBrokerCli:
@@ -28,8 +28,15 @@ class KafkaBrokerCli:
     def list(self, topic_name: str) -> None:
         """Print out topic lists"""
 
-        topic_list_cmd = "sudo docker exec broker kafka-topics --zookeeper zookeeper:2181 --list"
-        subprocess.call(topic_list_cmd.split())
+        from confluent_kafka import Producer
+        p = Producer({"bootstrap.servers": BROKER_ADDR})
+        cluster_metadata = p.list_topics()
+        print("List of topics")
+        print("\n".join(["- "+ t for t in cluster_metadata.topics.keys() if not t.startswith("__")]))
+        del p
+
+    def ls(self, topic_name: str) -> None:
+        self.list(topic_name)
 
     def create(self, topic_name: str) -> None:
         """create kafka topic"""
