@@ -97,6 +97,12 @@ Plugin 'yggdroot/indentline'
 set list lcs=tab:\|\ 
 let g:indentLine_color_term = 5
 
+" Code Completor YouCompleteMe
+Plugin 'ycm-core/YouCompleteMe'
+
+" TabNine for searching code snippet in VIM
+Plugin 'zxqfl/tabnine-vim'
+
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
 filetype plugin indent on    " required

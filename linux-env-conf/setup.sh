@@ -37,6 +37,28 @@ sudo apt-get install exuberant-ctags
 # Install CScope
 sudo apt-get install cscope
 
+# For YouCompleteMe 
+
+# Install Go
+wget https://dl.google.com/go/go1.14.1.linux-amd64.tar.gz
+sudo tar -xvf go1.14.1.linux-amd64.tar.gz
+sudo mv go /usr/local
+
+mkdir -p $HOME/go
+
+export GOROOT=/usr/local/go
+export GOPATH=$HOME/go
+export PATH=$GOPATH/bin:$GOROOT/bin:$PATH
+
+# Install npm and nodejs 
+sudo apt-get install curl
+curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -
+
+sudo apt-get install nodejs
+
+cd $HOME/.vim/bundle/YouCompleteMe
+python3 install.py --all
+
 # Move Vim config
 echo -e source $EXEC_PATH/vimrc > ~/.vimrc
 echo -e $INFO_PREFIX "Moved $EXEC_PATH/vimrc ==> ~/.vimrc"
