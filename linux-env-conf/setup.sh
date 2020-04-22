@@ -28,6 +28,14 @@ tmux source ~/.tmux.conf
 
 # VIM
 
+# Install Vim 
+git clone https://github.com/vim/vim.git 
+cd vim
+make distclean
+./configure --enable-pythoninterp=yes --enable-python3interp=yes
+make && sudo make install
+cd ../
+
 # Install Vundle
 git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
 
@@ -45,10 +53,6 @@ sudo tar -xvf go1.14.1.linux-amd64.tar.gz
 sudo mv go /usr/local
 
 mkdir -p $HOME/go
-
-export GOROOT=/usr/local/go
-export GOPATH=$HOME/go
-export PATH=$GOPATH/bin:$GOROOT/bin:$PATH
 
 # Install npm and nodejs 
 sudo apt-get install curl

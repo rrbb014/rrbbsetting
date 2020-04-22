@@ -6,3 +6,8 @@ ZSH_THEME="miloshadzic"
 alias ll="ls -alh"
 
 echo -ne "\e]1;PC NAME\a"
+
+# GO config
+export GOROOT=/usr/local/go
+export GOPATH=$HOME/go
+export PATH=$GOPATH/bin:$GOROOT/bin:$PATH

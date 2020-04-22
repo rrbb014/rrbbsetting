@@ -1,20 +1,25 @@
-
 " Encoding
 set enc=UTF-8
 set fileencodings=UTF-8
 
+" ###########
 " Text Editor
-set nu    " Set Line number
-set nobackup
+" ###########
+"
+set nocompatible    " be Improved not with vi
+set number   " Set Line number
+set nobackup " 
 set showcmd
 set autoindent
 set noswapfile
 set tabstop=4
 set shiftwidth=4
 set expandtab
+set ruler
+set ignorecase  " when search, ignore case
 
-set nocompatible    " be Improved
-filetype on
+syntax on    " Syntax highlighting
+filetype indent on  " syntax highlighting based on filetype
 
 " Folding
 set foldmethod=marker
@@ -102,6 +107,9 @@ Plugin 'ycm-core/YouCompleteMe'
 
 " TabNine for searching code snippet in VIM
 Plugin 'zxqfl/tabnine-vim'
+
+" Golang tool
+Plugin 'fatih/vim-go'
 
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
