@@ -17,6 +17,7 @@ set shiftwidth=4
 set expandtab
 set ruler
 set ignorecase  " when search, ignore case
+set backspace=indent,eol,start
 
 syntax on    " Syntax highlighting
 filetype indent on  " syntax highlighting based on filetype
