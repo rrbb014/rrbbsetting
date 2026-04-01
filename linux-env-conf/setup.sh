@@ -19,11 +19,11 @@ FONTS_DIR="$HOME/.local/share/fonts"
 mkdir -p "$FONTS_DIR"
 
 for FONT in JetBrainsMono D2Coding; do
-    echo -e $INFO "  Downloading $FONT Nerd Font"
-    wget -q "https://github.com/ryanoasis/nerd-fonts/releases/download/${NERD_FONTS_VERSION}/${FONT}.zip" \
-        -O "/tmp/${FONT}.zip"
-    unzip -o -q "/tmp/${FONT}.zip" "*.ttf" -d "$FONTS_DIR"
-    rm "/tmp/${FONT}.zip"
+  echo -e $INFO "  Downloading $FONT Nerd Font"
+  wget -q "https://github.com/ryanoasis/nerd-fonts/releases/download/${NERD_FONTS_VERSION}/${FONT}.zip" \
+    -O "/tmp/${FONT}.zip"
+  unzip -o -q "/tmp/${FONT}.zip" "*.ttf" -d "$FONTS_DIR"
+  rm "/tmp/${FONT}.zip"
 done
 
 fc-cache -f "$FONTS_DIR"
@@ -41,8 +41,8 @@ echo -e $INFO "Installing tmux-resurrect"
 rm -rf ~/tmux-resurrect
 git clone https://github.com/tmux-plugins/tmux-resurrect ~/tmux-resurrect
 
-echo "source $EXEC_PATH/tmux.conf" > ~/.tmux.conf
-echo "source $EXEC_PATH/tmux-theme.conf" >> ~/.tmux.conf
+echo "source $EXEC_PATH/tmux.conf" >~/.tmux.conf
+echo "source $EXEC_PATH/tmux-theme.conf" >>~/.tmux.conf
 echo -e $INFO "Linked tmux config: $EXEC_PATH/tmux.conf + tmux-theme.conf -> ~/.tmux.conf"
 tmux source ~/.tmux.conf 2>/dev/null || true
 
@@ -50,16 +50,16 @@ tmux source ~/.tmux.conf 2>/dev/null || true
 # Neovim
 # ─────────────────────────────────────────
 echo -e $INFO "Installing Neovim"
-NVIM_VERSION="v0.11.0"
+NVIM_VERSION="v0.12.0"
 wget -q "https://github.com/neovim/neovim/releases/download/${NVIM_VERSION}/nvim-linux-x86_64.tar.gz" -O /tmp/nvim.tar.gz
 sudo tar -C /usr/local -xzf /tmp/nvim.tar.gz --strip-components=1
 rm /tmp/nvim.tar.gz
 
 # LazyVim starter config (skip if already customized)
 if [ ! -d ~/.config/nvim ]; then
-    echo -e $INFO "Setting up LazyVim"
-    git clone https://github.com/LazyVim/starter ~/.config/nvim
-    rm -rf ~/.config/nvim/.git
+  echo -e $INFO "Setting up LazyVim"
+  git clone https://github.com/LazyVim/starter ~/.config/nvim
+  rm -rf ~/.config/nvim/.git
 fi
 
 # ─────────────────────────────────────────
@@ -67,7 +67,7 @@ fi
 # ─────────────────────────────────────────
 echo -e $INFO "Installing pyenv"
 if [ ! -d "$HOME/.pyenv" ]; then
-    curl https://pyenv.run | bash
+  curl https://pyenv.run | bash
 fi
 
 # ─────────────────────────────────────────
@@ -75,14 +75,14 @@ fi
 # ─────────────────────────────────────────
 echo -e $INFO "Installing nvm"
 if [ ! -d "$HOME/.nvm" ]; then
-    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
+  curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash
 fi
 
 # ─────────────────────────────────────────
 # Go
 # ─────────────────────────────────────────
 echo -e $INFO "Installing Go"
-GO_VERSION="1.22.0"
+GO_VERSION="1.26.1"
 wget -q "https://dl.google.com/go/go${GO_VERSION}.linux-amd64.tar.gz" -O /tmp/go.tar.gz
 sudo rm -rf /usr/local/go
 sudo tar -C /usr/local -xzf /tmp/go.tar.gz
@@ -93,7 +93,7 @@ mkdir -p "$HOME/go"
 # lazygit
 # ─────────────────────────────────────────
 echo -e $INFO "Installing lazygit"
-LAZYGIT_VERSION="0.44.1"
+LAZYGIT_VERSION="0.60.0"
 wget -q "https://github.com/jesseduffield/lazygit/releases/download/v${LAZYGIT_VERSION}/lazygit_${LAZYGIT_VERSION}_Linux_x86_64.tar.gz" -O /tmp/lazygit.tar.gz
 sudo tar -C /usr/local/bin -xzf /tmp/lazygit.tar.gz lazygit
 rm /tmp/lazygit.tar.gz
